@@ -1,67 +1,54 @@
 package com.angela.dao;
 
-import java.util.ArrayList;
 import java.util.List;
-
 import com.angela.aplicacion.JPAUtil;
 import com.angela.entidades.Mascota;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 
 public class MascotaDao {
-	EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
+    private EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
 
-	public String registrarMascota(Mascota miMascota) {
-		entityManager.getTransaction().begin();
-		entityManager.persist(miMascota);
-		entityManager.getTransaction().commit();
-		String resp = "Mascota Registrada!";
-		return resp;
-	}
+    public String registrarMascota(Mascota m) {
+        em.getTransaction().begin();
+        em.merge(m);
+        em.getTransaction().commit();
+        return "Mascota registrada!";
+    }
 
-	public Mascota consultarMascota(Long idMascota) {
-		Mascota miMascota = entityManager.find(Mascota.class, idMascota);
-		if (miMascota != null) {
-			return miMascota;
-		} else {
-			return null;
-		}
-	}
+    public Mascota consultarMascota(Long id) {
+        return em.find(Mascota.class, id);
+    }
 
-	public List<Mascota> consultarListaMascotas() {
-		List<Mascota> listaMascotas = new ArrayList<Mascota>();
-		Query query = entityManager.createQuery("SELECT m FROM Mascota m");
-		listaMascotas = query.getResultList();
-		return listaMascotas;
-	}
+    @SuppressWarnings("unchecked")
+    public List<Mascota> consultarListaMascotas() {
+        Query q = em.createQuery("SELECT m FROM Mascota m");
+        return q.getResultList();
+    }
 
-	public List<Mascota> consultarListaMascotasPorSexo(String sexo) {
-		List<Mascota> listaMascotas = new ArrayList<Mascota>();
-		String sentencia = "SELECT m FROM Mascota m WHERE m.sexo= :sexoMascota";
-		Query query = entityManager.createQuery(sentencia);
-		query.setParameter("sexoMascota", sexo);
-		listaMascotas = query.getResultList();
-		return listaMascotas;
-	}
+    public String actualizarMascota(Mascota m) {
+        em.getTransaction().begin();
+        em.merge(m);
+        em.getTransaction().commit();
+        return "Mascota actualizada!";
+    }
 
-	public String actualizarMascota(Mascota miMascota) {
-		entityManager.getTransaction().begin();
-		entityManager.merge(miMascota);
-		entityManager.getTransaction().commit();
-		String resp = "Mascota Actualizada!";
-		return resp;
-	}
+    public String eliminarMascota(Mascota m) {
+        em.getTransaction().begin();
+        em.remove(em.contains(m) ? m : em.merge(m));
+        em.getTransaction().commit();
+        return "Mascota eliminada!";
+    }
 
-	public String eliminarMascota(Mascota miMascota) {
-		entityManager.getTransaction().begin();
-		entityManager.remove(miMascota);
-		entityManager.getTransaction().commit();
-		String resp = "Mascota Eliminada!";
-		return resp;
-	}
+    public void close() {
+        em.close();
+        JPAUtil.shutdown();
+    }
 
-	public void close() {
-		entityManager.close();
-		JPAUtil.shutdown();
-	}
+    public List<Mascota> consultarListaMascotasPorSexo(String sexo) {
+        Query q = em.createQuery("SELECT m FROM Mascota m WHERE m.sexo = :sexo");
+        q.setParameter("sexo", sexo);
+        return q.getResultList();
+    }
 }
+

@@ -1,91 +1,102 @@
 package com.angela.entidades;
 
 import java.io.Serializable;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "mascotas") // Se indica ya que el nombre de la clase es diferente al nombre de la tabla
+@Table(name = "mascotas")
 public class Mascota implements Serializable {
-	private static final long serialVersionUID = 1L;
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY) // el id de la mascota es autoincrementable
-	@Column(name = "id_mascota") // indicamos el nombre de campo al que la variable hace referencia ya que son
-									// diferentes
-	private Long idMascota;
-	@Column(nullable = false, length = 45) // el nombre no puede ser null en BD, así como el tamaño de varchar 45
-	private String nombre;
-	@Column(length = 45) // solo indicamos el tamaño ya que corresponde la variable al nombre del campo
-							// en la tabla
-	private String raza;
-	@Column(name = "color", length = 45) // indicamos el nombre de campo al que la variable hace referencia ya que son
-											// dif
-	private String colorMascota;
-	@Column(length = 45)
-	private String sexo;
+    private static final long serialVersionUID = 1L;
 
-//Creamos el constructor vacio
-	public Mascota() {
-	}
+    @Id
+    @Column(name = "id_mascota")
+    private Long idMascota;
 
-//Creamos el constructor con parametros sin el id
-	public Mascota(String nombre, String raza, String colorMascota, String sexo) {
-		super();
-		this.nombre = nombre;
-		this.raza = raza;
-		this.colorMascota = colorMascota;
-		this.sexo = sexo;
-	}
+    @Column(nullable = false, length = 45)
+    private String nombre;
 
-//generamos los setters y getters correspondientes
-	public Long getIdMascota() {
-		return idMascota;
-	}
+    @Column(length = 45)
+    private String raza;
 
-	public void setIdMascota(Long idMascota) {
-		this.idMascota = idMascota;
-	}
+    @Column(length = 45)
+    private String colorMascota;
 
-	public String getNombre() {
-		return nombre;
-	}
+    @Column(length = 45)
+    private String sexo;
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "id_persona", nullable = false)
+    private Persona dueno;
 
-	public String getRaza() {
-		return raza;
-	}
+    public Mascota() {}
 
-	public void setRaza(String raza) {
-		this.raza = raza;
-	}
+    public Mascota(String nombre, String raza, String colorMascota, String sexo) {
+        this.nombre = nombre;
+        this.raza = raza;
+        this.colorMascota = colorMascota;
+        this.sexo = sexo;
+    }
 
-	public String getColorMascota() {
-		return colorMascota;
-	}
+    public Long getIdMascota() {
+        return idMascota;
+    }
 
-	public void setColorMascota(String colorMascota) {
-		this.colorMascota = colorMascota;
-	}
+    public void setIdMascota(Long idMascota) {
+        this.idMascota = idMascota;
+    }
 
-	public String getSexo() {
-		return sexo;
-	}
+    public String getNombre() {
+        return nombre;
+    }
 
-	public void setSexo(String sexo) {
-		this.sexo = sexo;
-	}
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-	@Override
-	public String toString() {
-		return "Mascota [idMascota=" + idMascota + ", nombre=" + nombre + "," + " raza=" + raza + ", colorMascota="
-				+ colorMascota + ", sexo=" + sexo + "]";
+    public String getRaza() {
+        return raza;
+    }
 
-	}
+    public void setRaza(String raza) {
+        this.raza = raza;
+    }
+
+    public String getColorMascota() {
+        return colorMascota;
+    }
+
+    public void setColorMascota(String colorMascota) {
+        this.colorMascota = colorMascota;
+    }
+
+    public String getSexo() {
+        return sexo;
+    }
+
+    public void setSexo(String sexo) {
+        this.sexo = sexo;
+    }
+
+    public Persona getDueno() {
+        return dueno;
+    }
+
+    public void setDueno(Persona dueno) {
+        this.dueno = dueno;
+    }
+
+    @Override
+    public String toString() {
+        return "Mascota [idMascota=" + idMascota + ", nombre=" + nombre + ", raza=" + raza
+                + ", colorMascota=" + colorMascota + ", sexo=" + sexo
+                + ", duenoId=" + (dueno != null ? dueno.getIdPersona() : null) + "]";
+    }
 }
+
